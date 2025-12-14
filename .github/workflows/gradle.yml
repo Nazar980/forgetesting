@@ -2,7 +2,7 @@ name: Publish
 
 on:
   push:
-    branches: [ 'master' ]
+    branches: [ '1.19.2' ]
     paths-ignore:
       - 'at-gradle/**'
       - 'at-gradle-demo/**'
