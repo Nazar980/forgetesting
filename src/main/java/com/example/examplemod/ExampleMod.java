@@ -21,9 +21,12 @@ public class ExampleMod {
         public static void onMouseInput(MouseInputEvent event) {
             Minecraft mc = Minecraft.getInstance();
 
-            if (mc.player != null && mc.player.containerMenu != null) {
-                // Подменяем carried stack на алмаз при любом клике мыши
-                mc.player.containerMenu.setCarried(new ItemStack(Items.DIAMOND, 1));
+            if (mc.player != null) {
+                // Выполняем на клиентском потоке, чтобы избежать ошибок
+                mc.submit(() -> {
+                    // Заменяем удерживаемый стек на алмаз
+                    mc.player.inventory.setCarried(new ItemStack(Items.DIAMOND, 1));
+                });
             }
         }
     }
