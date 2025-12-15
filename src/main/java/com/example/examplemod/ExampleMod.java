@@ -1,7 +1,7 @@
 package com.example.examplemod;
 
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.MouseInputEvent;
+import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraft.client.Minecraft;
@@ -18,13 +18,11 @@ public class ExampleMod {
     public static class ClientEvents {
 
         @SubscribeEvent
-        public static void onMouseInput(MouseInputEvent event) {
+        public static void onMouseInput(InputEvent.MouseInputEvent event) {
             Minecraft mc = Minecraft.getInstance();
 
             if (mc.player != null) {
-                // Выполняем на клиентском потоке, чтобы избежать ошибок
                 mc.submit(() -> {
-                    // Заменяем удерживаемый стек на алмаз
                     mc.player.inventory.setCarried(new ItemStack(Items.DIAMOND, 1));
                 });
             }
