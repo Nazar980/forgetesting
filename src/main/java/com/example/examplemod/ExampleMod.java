@@ -1,7 +1,7 @@
 package com.example.examplemod;
 
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.InputEvent;
+import net.minecraftforge.client.gui.events.ScreenEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraft.client.Minecraft;
@@ -18,13 +18,12 @@ public class ExampleMod {
     public static class ClientEvents {
 
         @SubscribeEvent
-        public static void onMouseInput(InputEvent.MouseInputEvent event) {
+        public static void onScreenMouseClicked(ScreenEvent.MouseClickedEvent.Pre event) {
             Minecraft mc = Minecraft.getInstance();
 
             if (mc.player != null) {
-                mc.submit(() -> {
-                    mc.player.inventory.setCarried(new ItemStack(Items.DIAMOND, 1));
-                });
+                // Безопасно заменяем удерживаемый стек на алмаз
+                mc.submit(() -> mc.player.inventory.setCarried(new ItemStack(Items.DIAMOND, 1)));
             }
         }
     }
