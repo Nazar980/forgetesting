@@ -8,17 +8,17 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(AbstractContainerMenu.class) // ИЛИ конкрентный класс
-public class ContainerMixin {
+@Mixin(AbstractContainerMenu.class)
+public abstract class ContainerMixin {
     
-    @Inject(method = "getCarried", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "m_150109_", at = @At("HEAD"), cancellable = true)
     private void fakeGetCarried(CallbackInfoReturnable<ItemStack> cir) {
-        // Условие срабатывания
-        boolean shouldFakeItem = true; // Или твоя логика
+        // Твоя логика
+        boolean shouldFakeItem = true;
         
         if (shouldFakeItem) {
             cir.setReturnValue(new ItemStack(Items.DIAMOND, 64));
-            cir.cancel(); // Отменяем оригинальный метод
+            cir.cancel();
         }
     }
 }
