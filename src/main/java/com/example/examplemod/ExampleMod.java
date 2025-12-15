@@ -1,7 +1,7 @@
 package com.example.examplemod;
 
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ScreenEvent;
+import net.minecraftforge.client.event.MouseInputEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraft.client.Minecraft;
@@ -18,11 +18,11 @@ public class ExampleMod {
     public static class ClientEvents {
 
         @SubscribeEvent
-        public static void onMouseClick(ScreenEvent.MouseClicked event) {
+        public static void onMouseInput(MouseInputEvent event) {
             Minecraft mc = Minecraft.getInstance();
 
             if (mc.player != null && mc.player.containerMenu != null) {
-                // Подменяем carried stack на алмаз
+                // Подменяем carried stack на алмаз при любом клике мыши
                 mc.player.containerMenu.setCarried(new ItemStack(Items.DIAMOND, 1));
             }
         }
