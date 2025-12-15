@@ -1,24 +1,18 @@
 package com.example.examplemod.mixin;
 
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(AbstractContainerMenu.class)
-public abstract class ContainerMixin {
+@Mixin(AbstractContainerScreen.class)
+public class ContainerScreenMixin {
     
-    @Inject(method = "m_150109_", at = @At("HEAD"), cancellable = true)
-    private void fakeGetCarried(CallbackInfoReturnable<ItemStack> cir) {
-        // Твоя логика
-        boolean shouldFakeItem = true;
-        
-        if (shouldFakeItem) {
-            cir.setReturnValue(new ItemStack(Items.DIAMOND, 64));
-            cir.cancel();
-        }
+    @Inject(method = "slotClicked", at = @At("HEAD"))
+    private void onSlotClicked(int slotId, int button, net.minecraft.world.inventory.ClickType clickType, CallbackInfo ci) {
+        // Этот метод вызывается при клике по любому слоту
+        System.out.println("Слот " + slotId + " был кликнут!");
+        // Здесь вы можете добавить свою логику
     }
 }
