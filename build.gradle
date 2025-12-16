@@ -2,7 +2,6 @@ plugins {
     id 'eclipse'
     id 'maven-publish'
     id 'net.minecraftforge.gradle' version '5.1.+'
-    id 'org.spongepowered.mixin' version '0.7.+'
 }
 
 version = '1.0'
@@ -16,7 +15,6 @@ println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty '
 minecraft {
     mappings channel: 'official', version: '1.19.2'
     
-    // РАЗКОММЕНТИРУЙ эту строку для Mixin!
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
     
     runs {
@@ -25,9 +23,6 @@ minecraft {
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
             property 'forge.enabledGameTestNamespaces', 'examplemod'
-            
-            // Важно для Mixin в dev среде
-            arg '-mixin.config=mixins.examplemod.json'
             
             mods {
                 examplemod {
@@ -42,8 +37,6 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
             property 'forge.enabledGameTestNamespaces', 'examplemod'
             
-            arg '-mixin.config=mixins.examplemod.json'
-            
             mods {
                 examplemod {
                     source sourceSets.main
@@ -56,8 +49,6 @@ minecraft {
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
             property 'forge.enabledGameTestNamespaces', 'examplemod'
-            
-            arg '-mixin.config=mixins.examplemod.json'
             
             mods {
                 examplemod {
@@ -81,40 +72,14 @@ minecraft {
     }
 }
 
-// Конфигурация Mixin
-mixin {
-    // Добавляем аргумент для запуска в dev среде
-    add sourceSets.main, 'mixins.examplemod.refmap.json'
-    
-    // Уровень логов (можно поставить DEBUG для отладки)
-    config 'mixins.examplemod.json'
-    
-    // Минимальная версия Mixin
-    debug.verbose = true
-    debug.export = true
-}
-
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
-    // Репозиторий для Mixin
-    maven { 
-        url = 'https://repo.spongepowered.org/repository/maven-public/' 
-    }
+    mavenCentral()
 }
 
 dependencies {
-    // Основная зависимость Forge
     minecraft 'net.minecraftforge:forge:1.19.2-43.2.21'
-    
-    // Mixin зависимости (ВАЖНО!)
-    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
-    implementation 'org.spongepowered:mixin:0.8.5'
-}
-
-// Настройка компиляции для Mixin
-compileJava {
-    options.annotationProcessorPath = configurations.annotationProcessor
 }
 
 jar {
@@ -126,13 +91,7 @@ jar {
             "Implementation-Title": project.name,
             "Implementation-Version": project.jar.archiveVersion,
             "Implementation-Vendor": "examplemodsareus",
-            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-            // Атрибуты для Mixin (ОБЯЗАТЕЛЬНО!)
-            "MixinConfigs": "mixins.examplemod.json",
-            "TweakClass": "org.spongepowered.asm.launch.MixinTweaker",
-            "TweakOrder": "0",
-            "FMLCorePluginContainsFMLMod": "true",
-            "ForceLoadAsMod": "true"
+            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
 }
