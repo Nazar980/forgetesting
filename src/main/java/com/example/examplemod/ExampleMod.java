@@ -1,12 +1,10 @@
 package com.example.examplemod;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraftforge.event.CreativeModeTabEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
@@ -14,27 +12,18 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 @Mod(ExampleMod.MODID)
-@Mod.EventBusSubscriber(modid = ExampleMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ExampleMod {
     public static final String MODID = "examplemod";
 
-    // Регистрируем предмет
+    // Регистрируем предметы
     private static final DeferredRegister<Item> ITEMS =
             DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
 
     public static final RegistryObject<Item> DIAMOND_SWORD_300 =
-            ITEMS.register("diamond_sword_300", () -> new Item(new Item.Properties().stacksTo(1)));
+            ITEMS.register("diamond_sword_300", () -> new Item(new Item.Properties().tab(CreativeModeTab.TAB_COMBAT)));
 
     public ExampleMod() {
         ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
-    }
-
-    // Добавляем в креативное меню
-    @SubscribeEvent
-    public static void onBuildContents(CreativeModeTabEvent.BuildContents event) {
-        if (event.getTab() == CreativeModeTabs.COMBAT) {
-            event.accept(getDiamondSword300());
-        }
     }
 
     // Создаём ItemStack алмазного меча с прочностью 300
