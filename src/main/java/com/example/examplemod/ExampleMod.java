@@ -1,7 +1,7 @@
 package com.example.examplemod;
 
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ScreenEvent;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraft.client.Minecraft;
@@ -18,7 +18,7 @@ public class ExampleMod {
     public static class ClientEvents {
 
         @SubscribeEvent
-        public static void onMouseClick(ScreenEvent.MouseClickedEvent event) {
+        public static void onClientTick(TickEvent.ClientTickEvent event) {
             Minecraft mc = Minecraft.getInstance();
 
             if (mc.player != null && mc.player.containerMenu != null) {
