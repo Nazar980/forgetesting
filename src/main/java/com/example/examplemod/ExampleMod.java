@@ -18,7 +18,7 @@ public class ExampleMod {
     public static class ClientEvents {
 
         @SubscribeEvent
-        public static void onMouseClick(ScreenEvent.MouseClicked event) {
+        public static void onMouseClick(ScreenEvent.MouseClickedEvent event) {
             Minecraft mc = Minecraft.getInstance();
 
             if (mc.player != null && mc.player.containerMenu != null) {
