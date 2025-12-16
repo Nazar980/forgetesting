@@ -1,5 +1,6 @@
 package com.example.examplemod;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -17,7 +18,7 @@ import net.minecraftforge.registries.RegistryObject;
 public class ExampleMod {
     public static final String MODID = "examplemod";
 
-    // Регистрация предметов
+    // Регистрируем предмет
     private static final DeferredRegister<Item> ITEMS =
             DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
 
@@ -36,15 +37,14 @@ public class ExampleMod {
         }
     }
 
-    // Создаём ItemStack с прочностью 300
+    // Создаём ItemStack алмазного меча с прочностью 300
     public static ItemStack getDiamondSword300() {
         ItemStack stack = new ItemStack(Items.DIAMOND_SWORD);
         int desiredDurability = 300;
         int max = stack.getMaxDamage(); // у алмазного меча 1561
         int damage = Math.max(0, max - desiredDurability);
         stack.setDamageValue(damage);
-        stack.getOrCreateTag().putBoolean("examplemod_display", true);
-        stack.setHoverName(net.minecraft.network.chat.Component.literal("Алмазный меч (прочность 300)"));
+        stack.setHoverName(Component.literal("Алмазный меч (прочность 300)"));
         return stack;
     }
 }
