@@ -1,5 +1,6 @@
 package com.example.examplemoddasd;
 
+import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -9,16 +10,17 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraft.commands.Commands;
 
 @Mod("examplemoddasd")
+@Mod.EventBusSubscriber(modid = "examplemoddasd", bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ExampleMod {
 
     public ExampleMod() {
+        System.out.println("ExampleMod loaded!");
     }
 
     @SubscribeEvent
-    public void onCommandRegister(RegisterCommandsEvent event) {
+    public static void onCommandRegister(RegisterCommandsEvent event) {
 
         event.getDispatcher().register(
                 Commands.literal("checkinfo")
@@ -38,20 +40,22 @@ public class ExampleMod {
                             BlockHitResult bhr = (BlockHitResult) hit;
                             BlockPos pos = bhr.getBlockPos();
 
-                            // ВАЖНО: здесь поле, НЕ метод
                             BlockState state = player.level.getBlockState(pos);
 
                             String name = state.getBlock().getName().getString();
 
                             player.sendSystemMessage(
-                                    Component.literal("Блок: " + name
-                                            + "\nX: " + pos.getX()
-                                            + " Y: " + pos.getY()
-                                            + " Z: " + pos.getZ())
+                                    Component.literal(
+                                            "Блок: " + name +
+                                                    "\nX: " + pos.getX() +
+                                                    " Y: " + pos.getY() +
+                                                    " Z: " + pos.getZ()
+                                    )
                             );
 
                             return 1;
                         })
         );
+
     }
 }
