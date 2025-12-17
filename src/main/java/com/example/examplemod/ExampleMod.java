@@ -2,10 +2,10 @@ package com.example.examplemoddasd;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -25,7 +25,6 @@ import net.minecraftforge.fml.common.Mod;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.Collection;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Mod("examplemoddasd")
@@ -68,7 +67,7 @@ public class ExampleMod {
         info.append("§e§lОсновная информация:\n");
         info.append("§fКоординаты: §7").append(pos.getX()).append(", ").append(pos.getY()).append(", ").append(pos.getZ()).append("\n");
         
-        ResourceLocation blockId = BuiltInRegistries.BLOCK.getKey(block);
+        ResourceLocation blockId = Registry.BLOCK.getKey(block);
         info.append("§fID блока: §a").append(blockId).append("\n");
         info.append("§fЛокализованное имя: §b").append(block.getName().getString()).append("\n");
         info.append("§fСветимость: §3").append(blockState.getLightEmission()).append("\n");
@@ -132,12 +131,11 @@ public class ExampleMod {
 
         // 7. Дополнительная информация
         info.append("\n§e§lДополнительно:\n");
-        info.append("§fМожно ли ставить блок: §3").append(blockState.canBeReplaced()).append("\n");
         info.append("§fВоздух: §3").append(blockState.isAir()).append("\n");
-        info.append("§fВода: §3").append(blockState.liquid()).append("\n");
-        info.append("§fГорючесть: §3").append(blockState.isFlammable(level, pos, bhr.getDirection())).append("\n");
-        info.append("§fМожет гореть: §3").append(blockState.ignitedByLava()).append("\n");
         info.append("§fТребует инструмента: §3").append(!blockState.requiresCorrectToolForDrops()).append("\n");
+        info.append("§fИмеет коллизию: §3").append(blockState.hasLargeCollisionShape()).append("\n");
+        info.append("§fПроводит красный камень: §3").append(blockState.isRedstoneConductor(level, pos)).append("\n");
+        info.append("§fПроводит сигнал: §3").append(blockState.isSignalSource()).append("\n");
 
         // Отправляем все части
         String[] lines = info.toString().split("\n");
@@ -150,64 +148,68 @@ public class ExampleMod {
         String indent = "  ".repeat(depth);
         
         for (String key : nbt.getAllKeys()) {
-            switch (nbt.getTagType(key)) {
-                case CompoundTag.TAG_COMPOUND:
+            Tag tag = nbt.get(key);
+            if (tag == null) continue;
+            
+            int tagId = tag.getId();
+            switch (tagId) {
+                case Tag.TAG_COMPOUND:
                     builder.append(indent).append("§f").append(key).append(": §9{\n");
-                    printNBT(nbt.getCompound(key), builder, depth + 1);
+                    printNBT((CompoundTag) tag, builder, depth + 1);
                     builder.append(indent).append("§9}\n");
                     break;
                     
-                case CompoundTag.TAG_LIST:
+                case Tag.TAG_LIST:
                     builder.append(indent).append("§f").append(key).append(": §6[\n");
-                    ListTag list = nbt.getList(key, 10); // 10 = CompoundTag
+                    ListTag list = (ListTag) tag;
                     for (int i = 0; i < list.size(); i++) {
-                        builder.append(indent).append("  §7[Элемент ").append(i).append("]\n");
-                        printNBT(list.getCompound(i), builder, depth + 2);
+                        Tag listTag = list.get(i);
+                        if (listTag.getId() == Tag.TAG_COMPOUND) {
+                            builder.append(indent).append("  §7[Элемент ").append(i).append("]\n");
+                            printNBT((CompoundTag) listTag, builder, depth + 2);
+                        } else {
+                            builder.append(indent).append("  §7").append(i).append(": ").append(listTag.toString()).append("\n");
+                        }
                     }
                     builder.append(indent).append("§6]\n");
                     break;
                     
-                case CompoundTag.TAG_STRING:
-                    String value = nbt.getString(key);
-                    builder.append(indent).append("§f").append(key).append(": §a\"").append(value).append("\"\n");
+                case Tag.TAG_STRING:
+                    builder.append(indent).append("§f").append(key).append(": §a\"").append(nbt.getString(key)).append("\"\n");
                     break;
                     
-                case CompoundTag.TAG_INT:
+                case Tag.TAG_INT:
                     builder.append(indent).append("§f").append(key).append(": §3").append(nbt.getInt(key)).append("\n");
                     break;
                     
-                case CompoundTag.TAG_LONG:
+                case Tag.TAG_LONG:
                     builder.append(indent).append("§f").append(key).append(": §3").append(nbt.getLong(key)).append("\n");
                     break;
                     
-                case CompoundTag.TAG_DOUBLE:
+                case Tag.TAG_DOUBLE:
                     builder.append(indent).append("§f").append(key).append(": §3").append(nbt.getDouble(key)).append("\n");
                     break;
                     
-                case CompoundTag.TAG_FLOAT:
+                case Tag.TAG_FLOAT:
                     builder.append(indent).append("§f").append(key).append(": §3").append(nbt.getFloat(key)).append("\n");
                     break;
                     
-                case CompoundTag.TAG_BYTE:
+                case Tag.TAG_BYTE:
                     builder.append(indent).append("§f").append(key).append(": §3").append(nbt.getByte(key)).append("\n");
                     break;
                     
-                case CompoundTag.TAG_SHORT:
+                case Tag.TAG_SHORT:
                     builder.append(indent).append("§f").append(key).append(": §3").append(nbt.getShort(key)).append("\n");
                     break;
                     
-                case CompoundTag.TAG_BYTE_ARRAY:
-                case CompoundTag.TAG_INT_ARRAY:
-                case CompoundTag.TAG_LONG_ARRAY:
+                case Tag.TAG_BYTE_ARRAY:
+                case Tag.TAG_INT_ARRAY:
+                case Tag.TAG_LONG_ARRAY:
                     builder.append(indent).append("§f").append(key).append(": §3[массив данных]\n");
                     break;
                     
-                case CompoundTag.TAG_BOOLEAN:
-                    builder.append(indent).append("§f").append(key).append(": §3").append(nbt.getBoolean(key)).append("\n");
-                    break;
-                    
                 default:
-                    builder.append(indent).append("§f").append(key).append(": §7[неизвестный тип]\n");
+                    builder.append(indent).append("§f").append(key).append(": §7[тип ").append(tagId).append("] ").append(tag.toString()).append("\n");
             }
         }
     }
