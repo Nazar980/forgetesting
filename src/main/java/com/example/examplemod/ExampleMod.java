@@ -1,61 +1,49 @@
 package com.example.examplemoddasd;
 
-import net.minecraft.commands.Commands;
-import net.minecraft.core.BlockPos;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.InputEvent;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.lwjgl.glfw.GLFW;
 
 @Mod("examplemoddasd")
-@Mod.EventBusSubscriber(modid = "examplemoddasd", bus = Mod.EventBusSubscriber.Bus.FORGE)
+@Mod.EventBusSubscriber(modid = "examplemoddasd", value = Dist.CLIENT)
 public class ExampleMod {
 
     public ExampleMod() {
-        System.out.println("ExampleMod loaded!");
+        MinecraftForge.EVENT_BUS.register(this);
     }
 
     @SubscribeEvent
-    public static void onCommandRegister(RegisterCommandsEvent event) {
+    public static void onKey(InputEvent.Key event) {
 
-        event.getDispatcher().register(
-                Commands.literal("checkinfo")
-                        .executes(ctx -> {
+        // если не кнопка C - до свидания
+        if (event.getKey() != GLFW.GLFW_KEY_C || event.getAction() != GLFW.GLFW_PRESS) return;
 
-                            ServerPlayer player = ctx.getSource().getPlayerOrException();
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player == null || mc.level == null) return;
 
-                            HitResult hit = player.pick(20, 0, false);
+        // луч игрока
+        HitResult result = mc.player.pick(20, 0, false);
 
-                            if (hit.getType() != HitResult.Type.BLOCK) {
-                                player.sendSystemMessage(
-                                        Component.literal("НЕТ БЛОКА ПОД ПРИЦЕЛОМ")
-                                );
-                                return 1;
-                            }
+        // если мимо блока – хуйня
+        if (result.getType() != HitResult.Type.BLOCK) {
+            mc.player.sendSystemMessage(Component.literal("нет блока под прицелом"));
+            return;
+        }
 
-                            BlockHitResult bhr = (BlockHitResult) hit;
-                            BlockPos pos = bhr.getBlockPos();
+        BlockHitResult bhr = (BlockHitResult) result;
+        BlockState state = mc.level.getBlockState(bhr.getBlockPos());
 
-                            BlockState state = player.level.getBlockState(pos);
-
-                            String name = state.getBlock().getName().getString();
-
-                            player.sendSystemMessage(
-                                    Component.literal(
-                                            "Блок: " + name +
-                                                    "\nX: " + pos.getX() +
-                                                    " Y: " + pos.getY() +
-                                                    " Z: " + pos.getZ()
-                                    )
-                            );
-
-                            return 1;
-                        })
+        // отправляем BlockState игроку
+        mc.player.sendSystemMessage(
+                Component.literal("state → " + state.toString())
         );
-
     }
 }
