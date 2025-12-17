@@ -1,4 +1,4 @@
-package com.example.examplemod;
+package com.example.examplemoddasd;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
