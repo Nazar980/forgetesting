@@ -11,7 +11,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraft.commands.Commands;
 
-@Mod("examplemod")
+@Mod("examplemoddasd")
 public class ExampleMod {
 
     public ExampleMod() {
