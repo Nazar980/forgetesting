@@ -1,67 +1,57 @@
 package com.example.examplemod;
 
-import com.mojang.brigadier.Command;
-import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.api.distmarker.Dist;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.commands.Commands;
 
 @Mod("examplemod")
 public class ExampleMod {
 
     public ExampleMod() {
-        System.out.println("ExampleMod loaded!");
     }
 
-    @Mod.EventBusSubscriber(modid = "examplemod")
-    public static class Events {
+    @SubscribeEvent
+    public void onCommandRegister(RegisterCommandsEvent event) {
 
-        @SubscribeEvent
-        public static void onCommandsRegister(RegisterCommandsEvent event) {
-            event.getDispatcher().register(
-                    Commands.literal("checkinfo")
-                            .executes(Events::checkInfo)
-            );
-        }
+        event.getDispatcher().register(
+                Commands.literal("checkinfo")
+                        .executes(ctx -> {
 
-        private static int checkInfo(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-            ServerPlayer player = ctx.getSource().getPlayerOrException();
+                            ServerPlayer player = ctx.getSource().getPlayerOrException();
 
-            HitResult hit = player.pick(20.0D, 0.0F, false);
+                            HitResult hit = player.pick(20, 0, false);
 
-            if (hit.getType() != HitResult.Type.BLOCK) {
-                player.sendSystemMessage(
-                        net.minecraft.network.chat.Component.literal("§cТы не смотришь на блок!")
-                );
-                return Command.SINGLE_SUCCESS;
-            }
+                            if (hit.getType() != HitResult.Type.BLOCK) {
+                                player.sendSystemMessage(
+                                        Component.literal("НЕТ БЛОКА ПОД ПРИЦЕЛОМ")
+                                );
+                                return 1;
+                            }
 
-            BlockHitResult blockHit = (BlockHitResult) hit;
-            BlockPos pos = blockHit.getBlockPos();
-            BlockState state = player.level().getBlockState(pos);
+                            BlockHitResult bhr = (BlockHitResult) hit;
+                            BlockPos pos = bhr.getBlockPos();
 
-            String blockName = state.getBlock().getDescriptionId();
-            String niceName = state.getBlock().getName().getString();
+                            // ВАЖНО: здесь поле, НЕ метод
+                            BlockState state = player.level.getBlockState(pos);
 
-            player.sendSystemMessage(
-                    net.minecraft.network.chat.Component.literal(
-                            "§aБлок: §f" + niceName +
-                                    "\n§aID: §f" + blockName +
-                                    "\n§aКоординаты: §f" + pos.getX() + ", " + pos.getY() + ", " + pos.getZ() +
-                                    "\n§aBlockState: §f" + state.toString()
-                    )
-            );
+                            String name = state.getBlock().getName().getString();
 
-            return Command.SINGLE_SUCCESS;
-        }
+                            player.sendSystemMessage(
+                                    Component.literal("Блок: " + name
+                                            + "\nX: " + pos.getX()
+                                            + " Y: " + pos.getY()
+                                            + " Z: " + pos.getZ())
+                            );
+
+                            return 1;
+                        })
+        );
     }
 }
