@@ -12,7 +12,6 @@ import net.minecraft.world.level.material.Material;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -46,13 +45,13 @@ public class ExampleMod {
 
     public static final RegistryObject<Item> EXAMPLE_BLOCK_ITEM =
             ITEMS.register("example_block",
-                    () -> new BlockItem(EXAMPLE_BLOCK.get(), new Item.Properties()));
+                    () -> new BlockItem(EXAMPLE_BLOCK.get(),
+                            new Item.Properties().tab(CreativeModeTab.TAB_BUILDING_BLOCKS)));
 
     public ExampleMod() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
         modEventBus.addListener(this::commonSetup);
-        modEventBus.addListener(this::addCreative);
 
         BLOCKS.register(modEventBus);
         ITEMS.register(modEventBus);
@@ -63,13 +62,6 @@ public class ExampleMod {
     private void commonSetup(final FMLCommonSetupEvent event) {
         LOGGER.info("HELLO FROM COMMON SETUP");
         LOGGER.info("DIRT BLOCK >> {}", ForgeRegistries.BLOCKS.getKey(Blocks.DIRT));
-    }
-
-    // ✅ Creative Tab 1.19.2
-    private void addCreative(CreativeModeTabEvent.BuildContents event) {
-        if (event.getTab() == CreativeModeTab.TAB_BUILDING_BLOCKS) {
-            event.accept(EXAMPLE_BLOCK_ITEM.get());
-        }
     }
 
     @SubscribeEvent
