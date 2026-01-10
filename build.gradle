@@ -207,7 +207,11 @@ dependencies {
 	// }
 
 
-
+ext {
+	lwjglVersion = '3.3.1'
+	imguiVersion = '1.86.10'
+}
+	
 ['binding', 'lwjgl3', 'natives-linux', 'natives-windows', 'natives-macos'].each { name ->
     minecraftLibrary group: "io.github.spair", name: "imgui-java-$name", version: imguiVersion {
         exclude group: "org.lwjgl"
@@ -272,6 +276,7 @@ publishing {
 tasks.withType(JavaCompile).configureEach {
 	options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
 }
+
 
 
 
