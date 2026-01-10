@@ -207,17 +207,23 @@ dependencies {
 	// }
 
 
-ext {
-	lwjglVersion = '3.3.1'
-	imguiVersion = '1.86.10'
-}
+
 	
+// Цикл — теперь с круглыми скобками и явными именованными параметрами (это решает проблему "could not find method")
 ['binding', 'lwjgl3', 'natives-linux', 'natives-windows', 'natives-macos'].each { name ->
-    minecraftLibrary group: "io.github.spair", name: "imgui-java-$name", version: imguiVersion {
+    minecraftLibrary(
+        group:   "io.github.spair",
+        name:    "imgui-java-${name}",
+        version: imguiVersion
+    ) {
         exclude group: "org.lwjgl"
     }
-    
-    jarJar group: "io.github.spair", name: "imgui-java-${name}", version: imguiVersion {
+
+    jarJar(
+        group:   "io.github.spair",
+        name:    "imgui-java-${name}",
+        version: imguiVersion
+    ) {
         transitive false
         exclude group: "org.lwjgl"
     }
@@ -276,6 +282,7 @@ publishing {
 tasks.withType(JavaCompile).configureEach {
 	options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
 }
+
 
 
 
