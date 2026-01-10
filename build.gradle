@@ -156,10 +156,6 @@ repositories {
 	maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
 }
 
-ext {
-	lwjglVersion = '3.3.1'
-	imguiVersion = '1.86.10'
-}
 
 // minecraft.runs.all {
 // 	// Set the minecraft_classpath token to the paths of all jars in the library configuration
@@ -209,25 +205,40 @@ dependencies {
 
 
 	
-// Цикл — теперь с круглыми скобками и явными именованными параметрами (это решает проблему "could not find method")
-['binding', 'lwjgl3', 'natives-linux', 'natives-windows', 'natives-macos'].each { name ->
-    minecraftLibrary(
-        group:   "io.github.spair",
-        name:    "imgui-java-${name}",
-        version: imguiVersion
-    ) {
+dependencies {
+    // ... всё остальное твоё (minecraft, joml, annotationProcessor и т.д.) остаётся
+
+    // ImGui — вручную, без цикла, без переменных, всё в двойных кавычках
+    minecraftLibrary group: "io.github.spair", name: "imgui-java-binding", version: "1.86.10" {
         exclude group: "org.lwjgl"
     }
-
-    jarJar(
-        group:   "io.github.spair",
-        name:    "imgui-java-${name}",
-        version: imguiVersion
-    ) {
+    jarJar group: "io.github.spair", name: "imgui-java-binding", version: "1.86.10" {
         transitive false
         exclude group: "org.lwjgl"
     }
+
+    minecraftLibrary group: "io.github.spair", name: "imgui-java-lwjgl3", version: "1.86.10" {
+        exclude group: "org.lwjgl"
+    }
+    jarJar group: "io.github.spair", name: "imgui-java-lwjgl3", version: "1.86.10" {
+        transitive false
+        exclude group: "org.lwjgl"
+    }
+
+    minecraftLibrary group: "io.github.spair", name: "imgui-java-natives-windows", version: "1.86.10" {
+        exclude group: "org.lwjgl"
+    }
+    jarJar group: "io.github.spair", name: "imgui-java-natives-windows", version: "1.86.10" {
+        transitive false
+        exclude group: "org.lwjgl"
+    }
+
+    // Если играешь на linux — добавь natives-linux таким же образом
 }
+
+
+
+	
 }
 // implementation "io.github.spair:imgui-java-binding:$imguiVersion"
 // implementation "io.github.spair:imgui-java-lwjgl3:$imguiVersion"
@@ -282,6 +293,7 @@ publishing {
 tasks.withType(JavaCompile).configureEach {
 	options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
 }
+
 
 
 
