@@ -243,6 +243,7 @@ jar {
 				"MixinConfigs"			  : "forge-mixin.json"
 		])
 	}
+	from configurations.jarJar.collect { zipTree(it) }
 	// from configurations.library.collect { it.isDirectory() ? it : zipTree(it) }
 }
 
@@ -268,6 +269,7 @@ publishing {
 tasks.withType(JavaCompile).configureEach {
 	options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
 }
+
 
 
 
