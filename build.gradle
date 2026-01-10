@@ -203,7 +203,7 @@ dependencies {
 	// }
 
 
-
+}
 	
 dependencies {
     // ... всё остальное твоё (minecraft, joml, annotationProcessor и т.д.) остаётся
@@ -268,6 +268,7 @@ publishing {
 tasks.withType(JavaCompile).configureEach {
 	options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
 }
+
 
 
 
