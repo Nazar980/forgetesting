@@ -67,7 +67,7 @@ public class ImGuiScreen extends Screen{
 
 		if (ImGui.beginMenu("Stick"))
 		{
-			if (ImGui.button("Stick!")) { zeus.Stick();}
+			if (ImGui.button("Stick!")) { zeus.Health();}
 			ImGui.endMenu();
 		}
 
