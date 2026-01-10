@@ -30,12 +30,6 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
 
-jarJar.enable()
-
-tasks.named('jarJar') {
-	// ...
-}
-
 minecraft {
 	// The mappings can be changed at any time and must be in the following format.
 	// Channel:   Version:
@@ -243,7 +237,6 @@ jar {
 				"MixinConfigs"			  : "forge-mixin.json"
 		])
 	}
-	from configurations.jarJar.collect { zipTree(it) }
 	// from configurations.library.collect { it.isDirectory() ? it : zipTree(it) }
 }
 
@@ -269,6 +262,7 @@ publishing {
 tasks.withType(JavaCompile).configureEach {
 	options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
 }
+
 
 
 
