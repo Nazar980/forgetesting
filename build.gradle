@@ -166,9 +166,9 @@ dependencies {
     minecraft 'net.minecraftforge:forge:1.19.2-43.2.21'
 	implementation 'org.joml:joml:1.10.5'
 
-implementation fg.deobf(files('libs/imgui-java-binding-1.86.4.jar'))
-implementation fg.deobf(files('libs/imgui-java-lwjgl3-1.86.4.jar'))
-implementation fg.deobf(files('libs/imgui-java-natives-windows-1.86.4.jar'))
+implementation name: 'imgui-java-binding-1.86.4', ext: 'jar'
+    implementation name: 'imgui-java-lwjgl3-1.86.4', ext: 'jar'
+    implementation name: 'imgui-java-natives-windows-1.86.4', ext: 'jar'
 	// Mixins
 	// classpath 'org.spongepowered:mixingradle:0.7.+'
 	annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
@@ -248,12 +248,16 @@ publishing {
 		maven {
 			url "file://${project.projectDir}/mcmodsrepo"
 		}
+		flatDir {
+        dirs 'libs'  // ← твоя папка libs
+    }
 	}
 }
 
 tasks.withType(JavaCompile).configureEach {
 	options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
 }
+
 
 
 
