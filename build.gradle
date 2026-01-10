@@ -166,6 +166,9 @@ dependencies {
     minecraft 'net.minecraftforge:forge:1.19.2-43.2.21'
 	implementation 'org.joml:joml:1.10.5'
 
+implementation fg.deobf(files('libs/imgui-java-binding-1.86.4.jar'))
+implementation fg.deobf(files('libs/imgui-java-lwjgl3-1.86.4.jar'))
+implementation fg.deobf(files('libs/imgui-java-natives-windows-1.86.4.jar'))
 	// Mixins
 	// classpath 'org.spongepowered:mixingradle:0.7.+'
 	annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
@@ -197,17 +200,6 @@ dependencies {
 	// }
 
 
-}
-	
-dependencies {
-    // ... всё остальное твоё (minecraft, joml, annotationProcessor и т.д.) остаётся
-
-implementation fg.deobf(files('libs/imgui-java-binding-1.86.4.jar'))
-implementation fg.deobf(files('libs/imgui-java-lwjgl3-1.86.4.jar'))
-implementation fg.deobf(files('libs/imgui-java-natives-windows-1.86.4.jar'))
-
-
-	
 }
 // implementation "io.github.spair:imgui-java-binding:$imguiVersion"
 // implementation "io.github.spair:imgui-java-lwjgl3:$imguiVersion"
@@ -262,6 +254,7 @@ publishing {
 tasks.withType(JavaCompile).configureEach {
 	options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
 }
+
 
 
 
