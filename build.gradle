@@ -208,34 +208,9 @@ dependencies {
 dependencies {
     // ... всё остальное твоё (minecraft, joml, annotationProcessor и т.д.) остаётся
 
-    // ImGui — вручную, без цикла, без переменных, всё в двойных кавычках
-    minecraftLibrary group: "io.github.spair", name: "imgui-java-binding", version: "1.86.10" {
-        exclude group: "org.lwjgl"
-    }
-    jarJar group: "io.github.spair", name: "imgui-java-binding", version: "1.86.10" {
-        transitive false
-        exclude group: "org.lwjgl"
-    }
-
-    minecraftLibrary group: "io.github.spair", name: "imgui-java-lwjgl3", version: "1.86.10" {
-        exclude group: "org.lwjgl"
-    }
-    jarJar group: "io.github.spair", name: "imgui-java-lwjgl3", version: "1.86.10" {
-        transitive false
-        exclude group: "org.lwjgl"
-    }
-
-    minecraftLibrary group: "io.github.spair", name: "imgui-java-natives-windows", version: "1.86.10" {
-        exclude group: "org.lwjgl"
-    }
-    jarJar group: "io.github.spair", name: "imgui-java-natives-windows", version: "1.86.10" {
-        transitive false
-        exclude group: "org.lwjgl"
-    }
-
-    // Если играешь на linux — добавь natives-linux таким же образом
-}
-
+implementation fg.deobf(files('libs/imgui-java-binding-1.86.4.jar'))
+implementation fg.deobf(files('libs/imgui-java-lwjgl3-1.86.4.jar'))
+implementation fg.deobf(files('libs/imgui-java-natives-windows-1.86.4.jar'))
 
 
 	
