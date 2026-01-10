@@ -11,6 +11,7 @@ buildscript {
 		classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
 	}
 }
+jarJar.enable()
 
 plugins {
 	id 'eclipse'
@@ -166,9 +167,20 @@ dependencies {
     minecraft 'net.minecraftforge:forge:1.19.2-43.2.21'
 	implementation 'org.joml:joml:1.10.5'
 
-implementation name: 'imgui-java-binding-1.86.4', ext: 'jar'
-    implementation name: 'imgui-java-lwjgl3-1.86.4', ext: 'jar'
-    implementation name: 'imgui-java-natives-windows-1.86.4', ext: 'jar'
+jarJar group: "io.github.spair", name: "imgui-java-binding", version: "1.86.4" {
+    transitive false
+    exclude group: "org.lwjgl"
+}
+
+jarJar group: "io.github.spair", name: "imgui-java-lwjgl3", version: "1.86.4" {
+    transitive false
+    exclude group: "org.lwjgl"
+}
+
+jarJar group: "io.github.spair", name: "imgui-java-natives-windows", version: "1.86.4" {
+    transitive false
+    exclude group: "org.lwjgl"
+}
 	// Mixins
 	// classpath 'org.spongepowered:mixingradle:0.7.+'
 	annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
@@ -228,7 +240,9 @@ jar {
 				"Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
 				"MixinConfigs"			  : "forge-mixin.json"
 		])
+		
 	}
+	from configurations.jarJar.collect { zipTree(it) }
 	// from configurations.library.collect { it.isDirectory() ? it : zipTree(it) }
 }
 
@@ -248,8 +262,6 @@ publishing {
 		maven {
 			url "file://${project.projectDir}/mcmodsrepo"
 		}
-		flatDir {
-        dirs 'libs'  // ← твоя папка libs
     }
 	}
 }
@@ -257,6 +269,7 @@ publishing {
 tasks.withType(JavaCompile).configureEach {
 	options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
 }
+
 
 
 
