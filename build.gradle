@@ -207,14 +207,13 @@ dependencies {
 	// }
 
 
-// Сам блок зависимостей остаётся почти таким же, просто использует переменную
 ['binding', 'lwjgl3', 'natives-linux', 'natives-windows', 'natives-macos'].each {
-    minecraftLibrary (group: "io.github.spair", name: "imgui-java-$it", version: imguiVersion) {
+    minecraftLibrary group: "io.github.spair", name: "imgui-java-$it", version: "1.86.10" {
         exclude group: "org.lwjgl"
     }
     
-    jarJar(group: "io.github.spair", name: "imgui-java-${it}", version: imguiVersion) {
-        transitive(false)
+    jarJar group: "io.github.spair", name: "imgui-java-${it}", version: "1.86.10" {
+        transitive false
         exclude group: "org.lwjgl"
     }
 }
@@ -271,5 +270,6 @@ publishing {
 tasks.withType(JavaCompile).configureEach {
 	options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
 }
+
 
 
