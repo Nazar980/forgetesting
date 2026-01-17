@@ -98,26 +98,68 @@ repositories {
     maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
 }
 
+ext {
+	lwjglVersion = '3.3.1'
+	imguiVersion = '1.86.10'
+}
+
+// minecraft.runs.all {
+// 	// Set the minecraft_classpath token to the paths of all jars in the library configuration
+// 	// This is added with the actual Minecraft classpath to get the real classpath information later on
+// 	lazyToken('minecraft_classpath') {
+// 		configurations.library.copyRecursive().resolve().collect { it.absolutePath }.join(File.pathSeparator)
+// 	}
+// }
+
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.19.2-43.2.21'
-    implementation 'org.joml:joml:1.10.5'
+	// Specify the version of Minecraft to use. If this is any group other than 'net.minecraft', it is assumed
+	// that the dep is a ForgeGradle 'patcher' dependency, and its patches will be applied.
+	// The userdev artifact is a special name and will get all sorts of transformations applied to it.
+	minecraft 'net.minecraftforge:forge:1.19.3-44.1.23'
 
-    // Mixin processor
-    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+	// Mixins
+	// classpath 'org.spongepowered:mixingradle:0.7.+'
+	annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+	// clientAnnotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+	// apiAnnotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
-    // ImGui через jarJar (версия 1.86.4 — реально существует)
-    jarJar group: "io.github.spair", name: "imgui-java-binding", version: "1.86.4" {
-        transitive false
-        exclude group: "org.lwjgl"
-    }
-    jarJar group: "io.github.spair", name: "imgui-java-lwjgl3", version: "1.86.4" {
-        transitive false
-        exclude group: "org.lwjgl"
-    }
-    jarJar group: "io.github.spair", name: "imgui-java-natives-windows", version: "1.86.4" {
-        transitive false
-        exclude group: "org.lwjgl"
-    }
+	// Real mod deobf dependency examples - these get remapped to your current mappings
+	// implementation fg.deobf("com.tterrag.registrate:Registrate:MC${mc_version}-${registrate_version}") // Adds registrate as a dependency
+
+	// Examples using mod jars from ./libs
+	// implementation fg.deobf("blank:coolmod-${mc_version}:${coolmod_version}")
+
+	// For more info...
+	// http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
+	// http://www.gradle.org/docs/current/userguide/dependency_management.html
+	// implementation fg.deobf("org.jetbrains.kotlin:kotlin-reflect:1.8.20")
+	// implementation fg.deobf("org.jetbrains.kotlin:kotlin-stdlib:1.8.20")
+	
+	// implementation fg.deobf("kotlin.graphics:uno-core:0.7.10")
+	// implementation fg.deobf("kotlin.graphics:glm:0.9.9.1-build-9")
+
+	// Spair/ImGui
+	// implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
+
+	// ['', '-opengl', '-glfw'].each {
+	// 	implementation "org.lwjgl:lwjgl$it:$lwjglVersion"
+	// 	implementation "org.lwjgl:lwjgl$it::natives-windows"
+	// 	implementation "org.lwjgl:lwjgl$it::natives-linux"
+	// }
+	
+	['binding', 'lwjgl3', 'natives-linux', 'natives-windows', 'natives-macos'].each {
+		minecraftLibrary (group: "io.github.spair", name: "imgui-java-$it", version: "$imguiVersion") {
+			exclude group: "org.lwjgl"
+		}
+		jarJar(group: "io.github.spair", name: "imgui-java-${it}", version: "[0,)") {
+			transitive(false)
+			exclude group: "org.lwjgl"
+		}
+	}
+	// implementation "io.github.spair:imgui-java-binding:$imguiVersion"
+	// implementation "io.github.spair:imgui-java-lwjgl3:$imguiVersion"
+	// implementation "io.github.spair:imgui-java-natives-windows:$imguiVersion"
+	// implementation "io.github.spair:imgui-java-natives-linux:$imguiVersion"
 }
 
 mixin {
@@ -162,3 +204,4 @@ publishing {
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
 }
+
