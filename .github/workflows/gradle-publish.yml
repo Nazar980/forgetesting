@@ -1,6 +1,7 @@
 name: Build Forge Mod
 
 on:
+  workflow_dispatch:      # ← кнопка "Run workflow"
   release:
     types: [created]
 
