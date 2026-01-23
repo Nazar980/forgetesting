@@ -1,13 +1,9 @@
-import org.gradle.internal.os.OperatingSystem
-
 buildscript {
     repositories {
-        maven { url = 'https://files.minecraftforge.net/maven' }
         maven { url = 'https://repo.spongepowered.org/maven' }
         mavenCentral()
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
         classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
     }
 }
@@ -22,144 +18,49 @@ plugins {
 
 apply plugin: 'org.spongepowered.mixin'
 
-version = '1.0'
 group = 'edu.unl.csce466'
+version = '1.0'
 archivesBaseName = 'csce466-mod'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
-println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
-
-jarJar.enable()
-
 minecraft {
-    mappings channel: 'official', version: '1.19.2'
+    mappings channel: 'official', version: '1.19.3'
 
     runs {
         client {
             workingDirectory project.file('run')
-            property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
-            property 'forge.enabledGameTestNamespaces', 'examplemod'
-            mods {
-                csce466mod {
-                    source sourceSets.main
-                }
-            }
-        }
-
-        server {
-            workingDirectory project.file('run')
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
-            property 'forge.enabledGameTestNamespaces', 'examplemod'
-            mods {
-                csce466mod {
-                    source sourceSets.main
-                }
-            }
-        }
-
-        gameTestServer {
-            workingDirectory project.file('run')
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
-            property 'forge.enabledGameTestNamespaces', 'examplemod'
-            mods {
-                csce466mod {
-                    source sourceSets.main
-                }
-            }
-        }
-
-        data {
-            workingDirectory project.file('run')
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
-            args '--mod', 'csce466mod', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
-            mods {
-                csce466mod {
-                    source sourceSets.main
-                }
-            }
+            mods { csce466mod { source sourceSets.main } }
         }
     }
 }
 
-sourceSets.main.resources { srcDir 'src/generated/resources' }
-
 repositories {
     mavenCentral()
-    maven { url "https://raw.githubusercontent.com/kotlin-graphics/mary/master" }
-    maven { url "https://dl.bintray.com/kotlin/kotlin-dev" }
     maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
     maven { url "https://thedarkcolour.github.io/KotlinForForge/" }
     maven { url 'https://jitpack.io' }
     maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
 }
 
-ext {
-	lwjglVersion = '3.3.1'
-	imguiVersion = '1.86.10'
-}
-
-// minecraft.runs.all {
-// 	// Set the minecraft_classpath token to the paths of all jars in the library configuration
-// 	// This is added with the actual Minecraft classpath to get the real classpath information later on
-// 	lazyToken('minecraft_classpath') {
-// 		configurations.library.copyRecursive().resolve().collect { it.absolutePath }.join(File.pathSeparator)
-// 	}
-// }
-
 dependencies {
-	// Specify the version of Minecraft to use. If this is any group other than 'net.minecraft', it is assumed
-	// that the dep is a ForgeGradle 'patcher' dependency, and its patches will be applied.
-	// The userdev artifact is a special name and will get all sorts of transformations applied to it.
-	minecraft 'net.minecraftforge:forge:1.19.3-44.1.23'
+    minecraft 'net.minecraftforge:forge:1.19.3-44.1.23'
 
-	// Mixins
-	// classpath 'org.spongepowered:mixingradle:0.7.+'
-	annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
-	// clientAnnotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
-	// apiAnnotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
-	// Real mod deobf dependency examples - these get remapped to your current mappings
-	// implementation fg.deobf("com.tterrag.registrate:Registrate:MC${mc_version}-${registrate_version}") // Adds registrate as a dependency
+    // imgui — обычные зависимости
+    ['binding', 'lwjgl3'].each {
+        implementation "io.github.spair:imgui-java-$it:1.86.10"
+    }
 
-	// Examples using mod jars from ./libs
-	// implementation fg.deobf("blank:coolmod-${mc_version}:${coolmod_version}")
-
-	// For more info...
-	// http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
-	// http://www.gradle.org/docs/current/userguide/dependency_management.html
-	// implementation fg.deobf("org.jetbrains.kotlin:kotlin-reflect:1.8.20")
-	// implementation fg.deobf("org.jetbrains.kotlin:kotlin-stdlib:1.8.20")
-	
-	// implementation fg.deobf("kotlin.graphics:uno-core:0.7.10")
-	// implementation fg.deobf("kotlin.graphics:glm:0.9.9.1-build-9")
-
-	// Spair/ImGui
-	// implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
-
-	// ['', '-opengl', '-glfw'].each {
-	// 	implementation "org.lwjgl:lwjgl$it:$lwjglVersion"
-	// 	implementation "org.lwjgl:lwjgl$it::natives-windows"
-	// 	implementation "org.lwjgl:lwjgl$it::natives-linux"
-	// }
-	
-	['binding', 'lwjgl3', 'natives-linux', 'natives-windows', 'natives-macos'].each {
-		minecraftLibrary (group: "io.github.spair", name: "imgui-java-$it", version: "$imguiVersion") {
-			exclude group: "org.lwjgl"
-		}
-		jarJar(group: "io.github.spair", name: "imgui-java-${it}", version: "[0,)") {
-			transitive(false)
-			exclude group: "org.lwjgl"
-		}
-	}
-	// implementation "io.github.spair:imgui-java-binding:$imguiVersion"
-	// implementation "io.github.spair:imgui-java-lwjgl3:$imguiVersion"
-	// implementation "io.github.spair:imgui-java-natives-windows:$imguiVersion"
-	// implementation "io.github.spair:imgui-java-natives-linux:$imguiVersion"
+    // jarJar — только здесь, в отдельной конфигурации
+    ['binding', 'lwjgl3', 'natives-linux', 'natives-windows', 'natives-macos'].each {
+        jarJar("io.github.spair:imgui-java-$it:1.86.10") {
+            transitive(false)
+            exclude group: "org.lwjgl"
+        }
+    }
 }
 
 mixin {
@@ -170,38 +71,19 @@ mixin {
 
 jar {
     manifest {
-        attributes([
-            "Specification-Title"     : "csce466-mod",
-            "Specification-Vendor"    : "edu.unl.csce466",
-            "Specification-Version"   : "1",
-            "Implementation-Title"    : project.name,
-            "Implementation-Version"  : project.jar.archiveVersion,
-            "Implementation-Vendor"   : "edu.unl.csce466",
-            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-            "MixinConfigs"            : "forge-mixin.json"
-        ])
+        attributes(
+            "MixinConfigs": "forge-mixin.json"
+        )
     }
 
-    // Распаковываем jarJar-зависимости в модовый JAR
-    from configurations.jarJar.collect { zipTree(it) }
+    // jarJar — правильный способ
+    from {
+        configurations.jarJar.collect { zipTree(it) }
+    }
 }
 
 jar.finalizedBy('reobfJar')
 
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            artifact jar
-        }
-    }
-    repositories {
-        maven {
-            url "file://${project.projectDir}/mcmodsrepo"
-        }
-    }
-}
-
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
 }
-
