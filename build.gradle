@@ -1,3 +1,5 @@
+import org.gradle.internal.os.OperatingSystem
+
 buildscript {
     repositories {
         maven { url = 'https://repo.spongepowered.org/maven' }
@@ -25,7 +27,7 @@ archivesBaseName = 'csce466-mod'
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 minecraft {
-    mappings channel: 'official', version: '1.19.3'
+    mappings channel: 'official', version: '1.19.2'
 
     runs {
         client {
@@ -44,19 +46,23 @@ repositories {
     maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
 }
 
+ext {
+    imguiVersion = '1.86.10'
+}
+
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.19.3-44.1.23'
+    minecraft 'net.minecraftforge:forge:1.19.2-43.2.0'
 
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
-    // imgui — обычные зависимости
+    // обычные зависимости imgui
     ['binding', 'lwjgl3'].each {
-        implementation "io.github.spair:imgui-java-$it:1.86.10"
+        implementation "io.github.spair:imgui-java-$it:$imguiVersion"
     }
 
-    // jarJar — только здесь, в отдельной конфигурации
+    // jarJar — отдельная конфигурация (так FG5 не ломается)
     ['binding', 'lwjgl3', 'natives-linux', 'natives-windows', 'natives-macos'].each {
-        jarJar("io.github.spair:imgui-java-$it:1.86.10") {
+        jarJar("io.github.spair:imgui-java-$it:$imguiVersion") {
             transitive(false)
             exclude group: "org.lwjgl"
         }
